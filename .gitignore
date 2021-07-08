@@ -39,7 +39,9 @@
 **/android/gradlew
 **/android/gradlew.bat
 **/android/local.properties
-**/android/**/GeneratedPluginRegistrant.java
+
+# removed the below line so that @TahaTesser will believe that something does in fact exist in the java/ dir
+#**/android/**/GeneratedPluginRegistrant.java
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
