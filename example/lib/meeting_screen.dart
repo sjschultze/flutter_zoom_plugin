@@ -47,47 +47,53 @@ class MeetingWidget extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: ZoomView(onViewCreated: (controller) {
+        child: Center(
+          child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  minWidth: 70, minHeight: 70, maxWidth: 150, maxHeight: 150),
+              child: ZoomView(onViewCreated: (controller) {
 
-          print("Created the view");
+              print("Created the view");
 
-          controller.initZoom(this.zoomOptions)
-              .then((results) {
+              controller.initZoom(this.zoomOptions)
+                  .then((results) {
 
-            print("initialised");
-            print(results);
+                print("initialised");
+                print(results);
 
-            if(results[0] == 0) {
+                if(results[0] == 0) {
 
-              controller.zoomStatusEvents.listen((status) {
-                print("Meeting Status Stream: " + status[0] + " - " + status[1]);
-                if (_isMeetingEnded(status[0])) {
-                  Navigator.pop(context);
-                  timer?.cancel();
-                }
-              });
-
-              print("listen on event channel");
-
-              controller.joinMeeting(this.meetingOptions)
-                  .then((joinMeetingResult) {
-
-                timer = Timer.periodic(new Duration(seconds: 2), (timer) {
-                  controller.meetingStatus(this.meetingOptions.meetingId)
-                      .then((status) {
-                    print("Meeting Status Polling: " + status[0] + " - " + status[1]);
+                  controller.zoomStatusEvents.listen((status) {
+                    print("Meeting Status Stream: " + status[0] + " - " + status[1]);
+                    if (_isMeetingEnded(status[0])) {
+                      Navigator.pop(context);
+                      timer?.cancel();
+                    }
                   });
-                });
 
+                  print("listen on event channel");
+
+                  controller.joinMeeting(this.meetingOptions)
+                      .then((joinMeetingResult) {
+
+                    timer = Timer.periodic(new Duration(seconds: 2), (timer) {
+                      controller.meetingStatus(this.meetingOptions.meetingId)
+                          .then((status) {
+                        print("Meeting Status Polling: " + status[0] + " - " + status[1]);
+                      });
+                    });
+
+                  });
+                }
+
+              }).catchError((error) {
+
+                print("Error");
+                print(error);
               });
-            }
-
-          }).catchError((error) {
-
-            print("Error");
-            print(error);
-          });
-        })
+            })
+          )
+        )
       ),
     );
   }
